@@ -32,10 +32,12 @@ for idUrl in idUrlList:
     d["id"] = idUrl
     #HEADING
     d["heading"] = soup.find_all("h3", {"dir": "ltr"})[1].text
+    #IMAGE
+    d["image"] = soup.find_all("img", {"data-title": d["heading"]})[0]['src']
     #AUDIO LINK
     d["audio"] = soup.find_all("div", {"class":"bbcle-download-linkparent-extension-mp3"})[0].a['href']
     #TIME
-    d["time"] = soup.find_all("div", {"class": "details"})[0].text.replace("\n","").replace("  ","").replace("				","")
+    d["time"] = soup.find_all("div", {"class": "details"})[0].text.replace("Episode","").replace(idUrl.replace("ep-",""), "").replace("\n","").replace("  ","").replace("				","").replace("  	","").replace("/","")
     #Summary
     d["summary"] = soup.find_all("div", {"class": "widget-richtext"})[0].p.text
     # Question Title
@@ -44,7 +46,7 @@ for idUrl in idUrlList:
     d["vocabularyTitle"] = 'Vocabulary'
     #Transcript 
     d["transcriptTitle"] = 'Transcript'
-    
+
     #Get details
     detailContent=soup.find_all("div", {"class": "text"})[1]
 
@@ -67,12 +69,11 @@ for idUrl in idUrlList:
             elif i == 3:
                 tList.append(child)
     #Question Detail
-    d["questionDetail"] = qList
+    d["questionDetail"] = ''.join(str(e) for e in qList)
     #Vocabulary Detail
-    d["vocabularyDetail"] = vList
+    d["vocabularyDetail"] = ''.join(str(e) for e in vList)
     #Transcript Detail
-    d["transcriptDetail"] = tList
-    
+    d["transcriptDetail"] = ''.join(str(e) for e in tList)
     df=pandas.DataFrame([d,])
     with open('data.csv', 'a') as f:
         df.to_csv(f, header=False)
