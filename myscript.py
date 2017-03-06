@@ -83,3 +83,4 @@ for idUrl in idUrlList:
     df=pandas.DataFrame([d,])
     with open('data.csv', 'a') as f:
         df.to_csv(f, header=False)
+        print(df)
