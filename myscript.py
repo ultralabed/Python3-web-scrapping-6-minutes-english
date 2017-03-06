@@ -13,15 +13,21 @@ c=r.content
 soup=BeautifulSoup(c,"html.parser")
 allEpsList=soup.find_all("li", {"class": "course-content-item"})
 
-for item in allEpsList:
+def updateIdUrlList(item):
     epId=item.div['data-feature-item'].replace('/features/6-minute-english/','')
     epDate=item.div.nextSibling.nextSibling.nextSibling.nextSibling.h3.text.replace("\n","").replace("  ","").replace("				","").replace("	","").replace("  ","")
     idUrlListCsv.append({ 'id': epId, 'date': epDate })
     idUrlList.append(epId)
 
+#Handle particular id not in ul list
+updateIdUrlList(soup.find("div", {"class": "widget-bbcle-coursecontentlist"}))
+
+for item in allEpsList:
+    updateIdUrlList(item)
+
 df=pandas.DataFrame(idUrlListCsv)
 df.to_csv('IdList.csv')
-    
+
 for idUrl in idUrlList:
     r=requests.get(base_url+main_args_url+idUrl)
     c=r.content
